@@ -15,15 +15,26 @@ public class Servidor {
         System.out.println("Servidor escuchando en el puerto " + puerto);
         // Aquí se incluiría la lógica para iniciar el servidor (por ejemplo, un servidor de sockets)
         try (
-                ServerSocket echoSocket = new ServerSocket(puerto);
-                Socket clientSocket = echoSocket.accept();
-                PrintWriter socketOut = new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader socketIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                ServerSocket servidor = new ServerSocket(puerto);
+                Socket cliente = servidor.accept();
+                PrintWriter salida = new PrintWriter(cliente.getOutputStream(), true);
+                BufferedReader entrada = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
         ) {
-            String inputLine;
-            while ((inputLine = socketIn.readLine()) != null) {
-                socketOut.println(inputLine);
-                System.out.println(inputLine);
+            String mensaje;
+            while ((mensaje = entrada.readLine()) != null) {
+                //salida.println(mensaje);
+                System.out.println(mensaje);
+                // Terminamos la conexión si escribimos "fin"
+                if(mensaje.equals("fin")){
+                    // Mensaje que aparece en la consola
+                    System.out.println("Palabra clave recibida. Cerrando servidor...");
+                    // Mensaje que aparece en el cliente
+                    salida.println("Servidor cerrado. Adiós.");
+                    break;
+                }else{
+                    //
+                    salida.println(mensaje);
+                }
             }
         }catch (IOException e) {
             System.out.println("Error al escuchar el puerto " + puerto);

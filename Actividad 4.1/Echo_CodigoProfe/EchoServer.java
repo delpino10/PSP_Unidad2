@@ -19,9 +19,9 @@ public class EchoServer {
                 PrintWriter socketOut = new PrintWriter(clientSocket.getOutputStream(), true);
                 BufferedReader socketIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         ) {
-            String inputLine;
-            while ((inputLine = socketIn.readLine()) != null) {
-                socketOut.println(inputLine);
+            String mensaje;
+            while ((mensaje = socketIn.readLine()) != null) {
+                socketOut.println(mensaje);
             }
         }
     }

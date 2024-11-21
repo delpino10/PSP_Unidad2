@@ -19,9 +19,9 @@ public class Cliente {
                 Socket socket = new Socket(inetAddress, puerto);
                 PrintWriter socketOut = new PrintWriter(socket.getOutputStream(), true);
                 BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
                 BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
+            System.out.println("Conectado al servidor en " + ip + " en el puerto " + puerto);
             String userInput;
             while ((userInput = stdIn.readLine()) != null) {
                 socketOut.println(userInput);
