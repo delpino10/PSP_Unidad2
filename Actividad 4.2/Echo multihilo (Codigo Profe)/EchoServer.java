@@ -8,28 +8,28 @@ import java.net.Socket;
 public class EchoServer {
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
-            System.err.println("Usage: java EchoServer <port number>");
+            System.err.println("Por favor, ingrese el número de puerto.");
             System.exit(1);
         }
 
-        int portNumber = Integer.parseInt(args[0]);
+        int puerto = Integer.parseInt(args[0]);
+        System.out.println("Servidor escuchando en el puerto " + puerto);
         int contador=0;
-        try (ServerSocket echoSocket = new ServerSocket(portNumber)) {
+        try (ServerSocket servidor = new ServerSocket(puerto)) {
             while (++contador<=1) {
-                Socket clientSocket = echoSocket.accept();
+                Socket cliente = servidor.accept();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try (PrintWriter socketOut = new PrintWriter(clientSocket.getOutputStream(), true);
-                             BufferedReader socketIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                        try (PrintWriter salida = new PrintWriter(cliente.getOutputStream(), true);
+                             BufferedReader entrada = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
                         ) {
-                            String inputLine;
-                            while ((inputLine = socketIn.readLine()) != null) {
-                                System.out.printf("clientSocket %s echo: %s%n", clientSocket, inputLine);
-                                socketOut.println(inputLine);
-                                if (inputLine.equals("fin")) {
-                                    String despedida="ADIOS QUERIDO CLIENTE";
-                                    socketOut.println(despedida);
+                            String mensaje;
+                            while ((mensaje = entrada.readLine()) != null) {
+                                System.out.printf("cliente %s echo: %s%n", cliente, mensaje);
+                                salida.println(mensaje);
+                                if (mensaje.equals("fin")) {
+                                    salida.println("ADIOS QUERIDO CLIENTE");
                                     break;
                                 }
                             }
@@ -37,7 +37,7 @@ public class EchoServer {
                             e.printStackTrace();
                         } finally {
                             try {
-                                clientSocket.close();
+                                cliente.close();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
