@@ -11,8 +11,8 @@ public class Servidor {
             System.err.println("Por favor, ingrese el número de puerto.");
             System.exit(1);
         }
-//        int puerto = Integer.parseInt(args[0]);  // Obtenemos el puerto desde los parámetros de la línea de comando
-        int puerto = 8000;  // Obtenemos el puerto desde los parámetros de la línea de comando
+        int puerto = Integer.parseInt(args[0]);  // Obtenemos el puerto desde los parámetros de la línea de comando
+//        int puerto = 8000;  // Obtenemos el puerto desde los parámetros de la línea de comando
         System.out.println("Servidor escuchando en el puerto " + puerto);
         // Aquí se incluiría la lógica para iniciar el servidor (por ejemplo, un servidor de sockets)
         try (
