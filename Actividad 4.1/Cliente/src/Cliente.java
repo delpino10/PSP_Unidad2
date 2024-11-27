@@ -12,6 +12,7 @@ public class Cliente {
             System.out.println("Por favor, ingrese la dirección IP y el puerto.");
             return;
         }
+        // TAnto la Ip como el servidor pueden ser números
         String ip = args[0];   // Dirección IP del servidor
         InetAddress direccionIp = InetAddress.getByName(ip);
         int puerto = Integer.parseInt(args[0]);  // Puerto del servidor

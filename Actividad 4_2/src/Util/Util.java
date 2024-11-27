@@ -2,14 +2,18 @@ package Util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.PrintStream;
+
+import static Util.Error.ERROR_PUERTO_INVALIDO;
+
 public class Util {
 
     private Util() {}
 
-    public static void error(Error error, Object ... dato){
+    public static void error(Error error, Object dato){
         switch (error){
             case ERROR_PUERTO_INVALIDO:
-                System.err.println("el puerto debe ser un número en el rango [1, 65535] (puerto = %d)", dato[0]);
+                PrintStream printf = System.err.printf("el puerto debe ser un número en el rango [1, 65535] (puerto = %d)", dato[0]);
                 break;
             default:
                 System.err.println("código de error desconocido: " + error);
@@ -17,11 +21,11 @@ public class Util {
     }
 
     public static void uso(@NotNull String mensaje){
-        System.err.println("Uso: java %s %s", nombreClasePrincipal(), mensaje );
+        System.err.printf("Uso: java %s %s", nombreClasePrincipal(), mensaje );
     }
 
     public static String nombreClasePrincipal(){
-        // Obtenemos la pila de llamadad (stack Trace)
+        // Obtenemos la pila de llamada (stack Trace)
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         // El último elemento es el método main de la clase principal
         StackTraceElement penultimoElemento = stackTrace[stackTrace.length - 1];
