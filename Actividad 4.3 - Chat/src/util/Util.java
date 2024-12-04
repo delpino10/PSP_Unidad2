@@ -1,5 +1,6 @@
 package util;
 
+
 import org.jetbrains.annotations.NotNull;
 
 public class Util {

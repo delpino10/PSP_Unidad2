@@ -6,13 +6,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 import util.Util;
 
 /**
  * Cliente Chat
  * arg[0]   Puerto del servidor
- *
  * Palabra clave de finalización: /fin
  *
  * @author Eduardo Barra Balao
@@ -28,23 +28,44 @@ public class ClienteChat {
         int puerto = Integer.parseInt(args[0]);
         try (
                 Socket socket = new Socket(ip, puerto);
-                PrintWriter salidaSocket = new PrintWriter(socket.getOutputStream(), true);
-                BufferedReader entradaSocket = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                BufferedReader entradaEstandar = new BufferedReader(new InputStreamReader(System.in))
+                // Salida Servidor
+                PrintWriter salidaServidor = new PrintWriter(socket.getOutputStream(), true);
+                // Entrada desde el servidor
+                BufferedReader entradaServidor = new BufferedReader(
+                        new InputStreamReader(socket.getInputStream()));
+                // Entrada desde el cliente
+                BufferedReader entradaUser = new BufferedReader(
+                        new InputStreamReader(System.in))
         ) {
-            String entradaUsuario;
-            while ((entradaUsuario = entradaEstandar.readLine()) != null) {
-                salidaSocket.println(entradaUsuario);
-                System.out.println("echo: " + entradaSocket.readLine());
-                // Aunque el cliente envie la palabra de finalización, el hilo cliente no finaliza (se queda en este
-                // bucle while).
-                // Además no leemos del socket de entrada la despedida que nos envía el servidor tras enviarle la
-                // palabra de finalización (ni la mostramos por pantalla)
-                // Si escribimos en el teclado y el servidor ha finalizado la conexión, se intentará escribir en el
-                // socket de salida que ya no está conectado al socket del servidor y ocurrirá el siguiente error:
-                // Exception in thread "main" java.net.SocketException: Se ha anulado una conexión establecida por el
-                // software en su equipo host.
+            // hilo para leer los mensajes del servidor
+            Thread hiloLectura = new Thread(() -> {
+                String mensajeDesdeServidor;
+                try{
+                    while ((mensajeDesdeServidor = entradaServidor.readLine()) != null){
+                        System.out.println("Mensaje: " + mensajeDesdeServidor);
+                    }
+                } catch (IOException e) {
+                   System.err.println("Error: " + e.getMessage());
+                }
+            });
+            hiloLectura.start();
+
+            String mensajeDesdeUsuario;
+            while ((mensajeDesdeUsuario = entradaUser.readLine()) != null){
+                salidaServidor.println(mensajeDesdeUsuario);
+                // Si el cliente envió "/fin", el servidor enviará la despedida
+                if (mensajeDesdeUsuario.equals("fin")) {
+                    String x = entradaUser.readLine();
+                    System.out.println("El servidor dice: " + x);
+                    break;
+                }
             }
+
+        }catch (SocketException e){
+            // Manejar la excepción si el servidor ha cerrado la conexión
+            System.err.println("El servidor ha cerrado la conexión.");
+        }catch (IOException e){
+            System.err.println("Error: " + e.getMessage());
         }
     }
 
