@@ -4,6 +4,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import util.Util;
 
+
+import static util.Configuracion.*;
 import static util.EchoError.ERROR_PUERTO_INVALIDO;
 import static util.Util.error;
 
@@ -17,6 +19,9 @@ import static util.Util.error;
  * @version 0.1
  */
 public class ServidorChat {
+    private static final int MAX_CLIENTES = 2;
+    //private static final int MIN_PUERTO = 1;
+    // private static final int MAX_PUERTO = 65535;
     private final int puerto;                         // Puerto del servidor
     private final int maxClientes;                    // Máximo número de clientes conectados
     private final ThreadGroup clientes;               // Clientes de chat
@@ -50,7 +55,7 @@ public class ServidorChat {
         // Verificar que el puerto esta en un rango determinado
         try {
             puerto = Integer.parseInt(args[0]);
-            if (puerto < 1 || puerto > 65535) {
+            if (puerto < MIN_PUERTO.n()|| puerto > MAX_PUERTO.n()) {
                 error(ERROR_PUERTO_INVALIDO, puerto);
                 uso();
                 System.exit(1);
@@ -62,6 +67,7 @@ public class ServidorChat {
         }
 
         new ServidorChat(puerto, MAX_CLIENTES).iniciar();
+        System.out.println("Fin del Servidor: " + APODO_SERVIDOR.s());
     }
 
     public void iniciar() {
@@ -69,17 +75,20 @@ public class ServidorChat {
         // Iniciamos el servidor en un determinado puerto
         try (ServerSocket servidorSocket = new ServerSocket(puerto)) {
             // Mensaje por consola
+            //System.out.println(version("ServidorChat ", + VERSION_SERVIDOR.s()));
             System.out.println("Servidor iniciado en puerto "+puerto);
             // Según van accediendo los clientes
-            while (++contador<=maxClientes) {
-                /*El ServerSocket es el encargado de aceptar las
+            while (++contador<=MAX_CLIENTES) {
+                /*
+                El servidorSocket es el encargado de aceptar las
                 solicitudes de conexión de los clientes y,
-                cuando un cliente solicita una conexión, ServerSocket establece la conexión*/
+                cuando un cliente solicita una conexión, servidorSocket establece la conexión
+                */
                 Socket clienteSocket = servidorSocket.accept();
                 System.out.println("Se ha establecido la conexión con el cliente "+contador);
                 // Esperar a que un cliente se conecte
                 // Creamos un hilo para manejar los mensajes del cliente
-                new Thread(clientes, new GestorCliente(clienteSocket)).start();
+                new Thread(clientes, new GestorCliente(clienteSocket), APODO_SERVIDOR.s()).start();
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
