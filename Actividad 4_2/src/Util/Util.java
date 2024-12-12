@@ -13,7 +13,7 @@ public class Util {
     public static void error(Error error, Object dato){
         switch (error){
             case ERROR_PUERTO_INVALIDO:
-                PrintStream printf = System.err.printf("el puerto debe ser un número en el rango [1, 65535] (puerto = %d)", dato[0]);
+                System.err.printf("el puerto debe ser un número en el rango [1, 65535] (puerto = %d)", dato[0])
                 break;
             default:
                 System.err.println("código de error desconocido: " + error);
