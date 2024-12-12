@@ -3,6 +3,7 @@ package Servidor;
 import Util.Util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -26,7 +27,7 @@ public class ServidorMulti {
         try {
             int puertoCandidato = Integer.parseInt(args[0]);
             if (puertoCandidato < 1 || puertoCandidato > 65535) {
-                Util.error();
+                System.out.println("El puerto de be ser un numero entre 1 y 65535 " +args[1]);
                 System.exit(1);
             }
             puerto = puertoCandidato;
@@ -45,40 +46,42 @@ public class ServidorMulti {
 
         System.out.println("Servidor iniciado en puerto " + puerto);
 
+        int contador = 0;
         try (ServerSocket serverSocket = new ServerSocket(puerto)) {
-            int contador = 0;
 
-            while (true) {
-                // Espera hasta que el número de clientes simultáneos sea menor o igual a MAX_CLIENTES.
-                if (contador < MAX_CLIENTES) {
+            while (++contador <= MAX_CLIENTES) {
+                // Espera hasta que el número de clientes simultáneos sea menor o igual a MAX_CLIENTES
                     // System.out.println("Esperando peticiones de conexión del cliente " + contador); // Mensaje opcional
                     Socket socket = serverSocket.accept();
                     contador++;
                     System.out.println("Se ha establecido la conexión con el cliente " + contador);
 
                     // Crear un hilo para manejar al cliente
-                    new Thread(() -> {
-                        try (BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                             PrintWriter salida = new PrintWriter(socket.getOutputStream(), true)) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try (BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                                 PrintWriter salida = new PrintWriter(socket.getOutputStream(), true)) {
 
-                            System.out.println("Servidor esperando a que el cliente envíe una línea de texto");
-                            String linea;
-                            while ((linea = entrada.readLine()) != null) {
-                                salida.println("Echo: " + linea);
-                                System.out.println(linea);
+                                System.out.println("Servidor esperando a que el cliente envíe una línea de texto");
+                                String linea;
+                                while ((linea = entrada.readLine()) != null) {
+                                    salida.println("Echo: " + linea);
+                                    System.out.println(linea);
+                                }
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
                             }
-                        } catch (Exception e) {
-                            System.err.println("Error en la conexión con el cliente.");
-                        } finally {
-                            contador--;
-                        }
-                    }).start();
+
+
                 }
             }
-        } catch (Exception e) {
-            System.err.println("Error iniciando el servidor: " + e.getMessage());
+
+    } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+
+
     }
-
-
+    }
 }
