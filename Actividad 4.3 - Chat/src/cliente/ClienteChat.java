@@ -51,6 +51,7 @@ public class ClienteChat {
             });
             hiloLectura.start();
 
+            System.out.println("Manda un mensaje o escribe 'fin' para salir ");
             String mensajeDesdeUsuario;
             while ((mensajeDesdeUsuario = entradaUser.readLine()) != null){
                 // Envia el mensaje al servidor
@@ -60,6 +61,9 @@ public class ClienteChat {
                     String x = entradaServidor.readLine();
                     System.out.println("El servidor dice: " + x);
                     break;
+                }
+                if (mensajeDesdeUsuario.equals("info")) {
+                    System.out.println("Conectado al servidor: " + socket.getInetAddress() + ":" + socket.getPort());
                 }
             }
 

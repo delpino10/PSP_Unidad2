@@ -7,6 +7,7 @@ public enum Conf {
     PUERTO(8000),
     MIN_PUERTO(1),
     MAX_PUERTO(65535),
+    MAX_CLIENTES(3),
     DESPEDIDA("¡Adios querido cliente!");
     private Object o;
 

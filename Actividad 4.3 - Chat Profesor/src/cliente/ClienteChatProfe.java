@@ -102,9 +102,10 @@ public class ClienteChatProfe {
                 System.err.println("Error:" + e.getMessage());
             }
 
+            System.out.println("Manda un mensaje o escribe 'fin' para salir ");
+            System.out.println("Escribe 'info' para info de la conexión ");
             // Mensaje Cliente
             String mensajeUsuario;
-            String linea;
             while ((mensajeUsuario = entradaPorTeclado.readLine()) != null) {
                 System.out.println(mensaje(apodo, mensajeUsuario, Cliente));     // Mensaje del cliente por pantalla
                 salidaServidor.println(mensaje(apodo, mensajeUsuario, Cliente));   // Mensaje del cliente al servidor
@@ -115,6 +116,11 @@ public class ClienteChatProfe {
                     String x = entradaServidor.readLine();
                     System.out.printf("El %s dice: " + DESPEDIDA.s(), PUERTO.s());
                     break;
+                }
+                // M01: Modificar el programa para que sea
+                // configurable la visualización (o no) de la información del socket en un mensaje del cliente y/o del servidor
+                if (mensajeUsuario.equals("info")) {
+                    System.out.println("Conectado al servidor: " + Cliente.getInetAddress() + ":" + Cliente.getPort());
                 }
             }
         /*T07: Cazar las distintas excepciones (ver documentación de la API de Java) que pueden ocurrir en el bloque

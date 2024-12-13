@@ -2,6 +2,8 @@ package servidor;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import util.Conf;
 import util.Util;
 
 import static util.Conf.MAX_PUERTO;
@@ -67,7 +69,8 @@ public class ServidorChatProfe {
             System.exit(1);
         }
         // Iniciamos el Servidor
-        new ServidorChatProfe(puerto, MAX_CLIENTES).iniciar();
+        // T12: Definir MAX_CLIENTES en Conf y usarlo en el código (máximo número de clientes conectados al servidor en un momento determinado)
+        new ServidorChatProfe(puerto, Conf.MAX_CLIENTES.n()).iniciar();
         System.out.println("Fin del servidor: "+APODO_SERVIDOR.s());
     }
 
