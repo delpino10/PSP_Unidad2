@@ -2,18 +2,14 @@ package Util;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.PrintStream;
-
-import static Util.Error.ERROR_PUERTO_INVALIDO;
-
 public class Util {
 
     private Util() {}
 
-    public static void error(Error error, Object dato){
+    public static void error(Error error){
         switch (error){
             case ERROR_PUERTO_INVALIDO:
-                PrintStream printf = System.err.printf("el puerto debe ser un número en el rango [1, 65535] (puerto = %d)", dato[0]);
+                System.err.printf("el puerto debe ser un número en el rango [1, 65535] (puerto = %d)", dato[0])
                 break;
             default:
                 System.err.println("código de error desconocido: " + error);

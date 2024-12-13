@@ -28,14 +28,15 @@ public class ClienteChat {
         InetAddress ip = InetAddress.getLocalHost();
         int puerto = Integer.parseInt(args[0]);
         try (
+                // Se crea un socket que se conecta al servidor especificado por la dirección
                 // Instanciamos el Cliente por donde va a enviar los mensajes
                 Socket socket = new Socket(ip, puerto);
-                // Salida Servidor
+                // Se utiliza un PrintWriter para enviar datos al servidor.
                 PrintWriter salidaServidor = new PrintWriter(socket.getOutputStream(), true);
-                // Entrada desde el servidor
+                // Se utiliza un BufferedReader para recibir datos del servidor.
                 BufferedReader entradaServidor = new BufferedReader(
                         new InputStreamReader(socket.getInputStream()));
-                // Entrada desde el cliente
+                // Este BufferedReader permite leer datos ingresados por el usuario desde la consola.
                 BufferedReader entradaUser = new BufferedReader(
                         new InputStreamReader(System.in))
         ) {
@@ -52,14 +53,19 @@ public class ClienteChat {
             });
             hiloLectura.start();
 
+            System.out.println("Manda un mensaje o escribe 'fin' para salir ");
             String mensajeDesdeUsuario;
             while ((mensajeDesdeUsuario = entradaUser.readLine()) != null){
+                // Envia el mensaje al servidor
                 salidaServidor.println(mensajeDesdeUsuario);
                 // Si el cliente envió "/fin", el servidor enviará la despedida
                 if (mensajeDesdeUsuario.equals("fin")) {
                     String x = entradaUser.readLine();
                     System.out.println("El servidor dice: " + x);
                     break;
+                }
+                if (mensajeDesdeUsuario.equals("info")) {
+                    System.out.println("Conectado al servidor: " + socket.getInetAddress() + ":" + socket.getPort());
                 }
             }
 
