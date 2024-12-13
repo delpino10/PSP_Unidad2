@@ -57,6 +57,7 @@ public class GestorCliente implements Runnable {
             System.err.println("Error: " + e.getMessage() );
         } finally {
             try {
+                // Cerrar el socket porque no podemos dejar recursos abiertos
                 clienteSocket.close();
                 System.out.println("El servidor ha cerrado la conexión con el cliente " + clienteSocket);
             } catch (IOException e) {

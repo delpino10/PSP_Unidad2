@@ -52,7 +52,7 @@ public class ServidorChat {
             System.exit(1);
         }
 
-        // Verificar que el puerto esta en un rango determinado
+        // Verificar que el puerto está en un rango determinado
         try {
             puerto = Integer.parseInt(args[0]);
             if (puerto < MIN_PUERTO.n()|| puerto > MAX_PUERTO.n()) {

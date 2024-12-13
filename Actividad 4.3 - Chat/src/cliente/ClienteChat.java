@@ -24,9 +24,11 @@ public class ClienteChat {
             uso();
             System.exit(1);
         }
+        // IP del Cliente
         InetAddress ip = InetAddress.getLocalHost();
         int puerto = Integer.parseInt(args[0]);
         try (
+                // Instanciamos el Cliente por donde va a enviar los mensajes
                 Socket socket = new Socket(ip, puerto);
                 // Salida Servidor
                 PrintWriter salidaServidor = new PrintWriter(socket.getOutputStream(), true);
@@ -42,7 +44,7 @@ public class ClienteChat {
                 String mensajeDesdeServidor;
                 try{
                     while ((mensajeDesdeServidor = entradaServidor.readLine()) != null){
-                        System.out.println("Mensaje: " + mensajeDesdeServidor);
+                       System.out.println("Mensaje: " + mensajeDesdeServidor);
                     }
                 } catch (IOException e) {
                    System.err.println("Error: " + e.getMessage());
