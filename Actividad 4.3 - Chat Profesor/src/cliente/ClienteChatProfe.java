@@ -43,12 +43,27 @@ public class ClienteChatProfe {
             uso();
             System.exit(1);
         }
-        String apodo = args[0];
+        try{
+            
+          /*  int n = 0;
+            String[] args1 = args;
+            
+        switch (args[n]) {
+            case 1:
+                String apodo = args[0];
+                break;
+                
+            case 2:
+                InetAddress ipServidor = null;
+                ipServidor = InetAddress.getByName(args[1]);
+                break;
+            case 3:
+                
+                break;  
+        }*/
+
 
         // TODO: 17/12/2023 Usar parámetro args[1] como IP del servidor. Por ahora se usa localhost
-        InetAddress ipServidor = null;
-        try{
-        ipServidor = InetAddress.getByName(args[1]);
         } catch (UnknownHostException e) {
             error(EchoError.ERROR_HOST_INVALIDO,args[1]);
             uso();
@@ -72,6 +87,8 @@ public class ClienteChatProfe {
                 uso();
                 System.exit(1);
             }
+
+            // Creamos el Cliente
             new ClienteChatProfe(apodo, ipServidor, puertoServidor).iniciar();
             System.out.println("Fin del cliente: "+apodo);
 
@@ -80,7 +97,7 @@ public class ClienteChatProfe {
         }
     }
 
-    private void iniciar() throws IOException {
+    private void iniciar(String [] args) throws IOException {
         try (
                 // Se crea un socket que se conecta al servidor especificado por la dirección
                 Socket Cliente = new Socket(String.valueOf(ipServidor), puertoServidor);
@@ -127,10 +144,10 @@ public class ClienteChatProfe {
                try del método iniciar de la clase ClienteChat. Agregar errores asociados a EchoError.
                Usar ls métodos error y finalizar */
         }catch (SocketException e) {
-            finalizar(1);
-            //error(e,);
             System.err.println("El servidor ha cerrado la conexión.");
             System.err.println(e.getMessage());
+            error(EchoError.ERROR_HOST_INVALIDO, args[1]);
+            finalizar(1);
         }catch (IOException e){
             System.err.println("Error:" + e.getMessage());
         }

@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class Util {
     private Util() {}
-    public static void error(EchoError error, Object ...dato) {
+    public static void error(EchoError error, Object... dato) {
         switch (error) {
             case ERROR_PUERTO_INVALIDO:
                 System.out.printf("El puerto debe ser un número en el rango [1,65535] (puerto=%d)", dato[0]);
@@ -54,7 +54,7 @@ public class Util {
     // T04: Crear un método llamado finalizar que reciba un código de error y lo use como
     //  código de salida del proceso para el sistema operativo.
     //  Ejemplo del cuerpo del método finalizar: System.exit(e.getNumero())
-    public static void finalizar (int e) {
+    public static void finalizar(int e) {
         System.exit(e);
     }
 }
