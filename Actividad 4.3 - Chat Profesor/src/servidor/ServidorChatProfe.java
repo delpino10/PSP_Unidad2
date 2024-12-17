@@ -1,16 +1,17 @@
 package servidor;
 
+import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 import util.Conf;
 import util.Util;
 
-import static util.Conf.MAX_PUERTO;
-import static util.EchoError.ERROR_PUERTO_INVALIDO;
+import static util.Conf.*;
+import static util.EchoError.*;
 import static util.Util.error;
-import static util.Conf.APODO_SERVIDOR;
-import static util.Conf.MIN_PUERTO;
 import static util.Util.finalizar;
 
 
@@ -28,6 +29,7 @@ public class ServidorChatProfe {
     private int puerto;                                 // Puerto del servidor
     private int maxClientes;                            // Máximo número de clientes conectados
     private ThreadGroup clientes;                       // Clientes de chat
+    private static  String palabraSalida;
 
     /**
      * ServidorChat
@@ -50,10 +52,11 @@ public class ServidorChatProfe {
         final int MAX_CLIENTES=9;
         int puerto=0;
 
-        if (args.length != 1) {
+        if (args.length < 1) {
             uso();
             System.exit(1);
         }
+
 
         try {
             puerto = Integer.parseInt(args[0]);
@@ -66,26 +69,41 @@ public class ServidorChatProfe {
         } catch (NumberFormatException e) {
             error(ERROR_PUERTO_INVALIDO, puerto);
             uso();
-            System.exit(1);
+            finalizar(1);
         }
+
         // Iniciamos el Servidor
         // T12: Definir MAX_CLIENTES en Conf y usarlo en el código (máximo número de clientes conectados al servidor en un momento determinado)
-        new ServidorChatProfe(puerto, Conf.MAX_CLIENTES.n()).iniciar();
+        new ServidorChatProfe(puerto, Conf.MAX_CLIENTES.n()).iniciar(puerto);
         System.out.println("Fin del servidor: "+APODO_SERVIDOR.s());
     }
 
-    public void iniciar() {
+    public void iniciar(int args) {
         int contador=0;
         try (ServerSocket servidorSocket = new ServerSocket(puerto)) {
             System.out.println("Servidor iniciado en puerto "+puerto);
             while (++contador<=maxClientes) {
                 Socket clienteSocket = servidorSocket.accept();     // Esperando peticiones de conexión del cliente
-                System.out.println("Se ha establecido la conexión con el cliente "+contador);
+                System.out.println("Se ha establecido la conexión con el cliente " + contador);
                 new Thread(clientes, new GestorCliente(clienteSocket, APODO_SERVIDOR.s())).start();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
+        // Excepcion Server Socket
+        } catch (SocketTimeoutException e) {
+            error(ERROR_PUERTO_TIMEOUT, args);
+            System.out.println(e.getMessage());
+            finalizar(1);
+        } catch (BindException e){
+            error(ERROR_PUERTO_OCUPADO, args);
+            System.out.println(e.getMessage());
+            finalizar(1);
+        } catch (IllegalArgumentException e){
+            error(ERROR_PUERTO_NOTVALID, args);
+            System.out.println(e.getMessage());
+            finalizar(1);
+        }catch (IOException e) {
+            error(ERROR_PUERTO_IO, args);
+            System.out.println(e.getMessage());
+            finalizar(1);
         }
     }
 

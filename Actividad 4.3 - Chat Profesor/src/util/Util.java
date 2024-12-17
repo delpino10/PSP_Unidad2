@@ -5,11 +5,31 @@ import org.jetbrains.annotations.NotNull;
 import java.net.Socket;
 
 public class Util {
+
     private Util() {}
+
     public static void error(EchoError error, Object... dato) {
         switch (error) {
             case ERROR_PUERTO_INVALIDO:
-                System.out.printf("El puerto debe ser un número en el rango [1,65535] (puerto=%d)", dato[0]);
+                System.out.printf("El puerto debe ser un número en el rango [1,65535] (puerto=%s)", dato[0]);
+                break;
+            case  ERROR_HOST_INVALIDO:
+                System.out.println("Dirección IP o nombre de host inválido: " + dato[0]);
+                break;
+            case ERROR_PUERTO_OCUPADO:
+                System.out.println("No se pudo enlazar al puerto 8080. El puerto ya está en uso: ");
+                break;
+            case ERROR_PUERTO_TIMEOUT:
+                System.out.println("Timeout al esperar una conexión. Volviendo a intentar...");
+                break;
+            case ERROR_PUERTO_NOTVALID:
+                System.out.println("Puerto inválido especificado:");
+                break;
+            case ERROR_PUERTO_IO:
+                System.out.println("Error de E/S al crear o usar el ServerSocket:");
+                break;
+            case ERROR_HOST_DESCONOCIDO:
+                System.out.println("Host deconocido");
                 break;
             default:
                 System.err.println("Código de error desconocido: "+error);
