@@ -92,7 +92,7 @@ public class ClienteChatProfe {
     private void iniciar(InetAddress n) throws IOException {
         try (
                 // Se crea un socket que se conecta al servidor especificado por la dirección
-                Socket Cliente = new Socket(String.valueOf(ipServidor), puertoServidor);
+                Socket Cliente = new Socket(ipServidor, puertoServidor);
                 // Se utiliza un PrintWriter para enviar datos al servidor.
                 PrintWriter salidaServidor = new PrintWriter(Cliente.getOutputStream(), true);
                 // Se utiliza un BufferedReader para recibir datos del servidor.
