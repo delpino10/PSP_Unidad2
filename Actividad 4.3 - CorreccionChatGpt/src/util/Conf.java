@@ -4,7 +4,7 @@ package util;
 public enum Conf {
     APODO_SERVIDOR("SERVIDOR"),
     HOST("localhost"),
-    PUERTO(1111),
+    PUERTO(8000),
     MIN_PUERTO(1),
     MAX_PUERTO(65535),
     MAX_CLIENTES(3),

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 import static util.Conf.DESPEDIDA;
 import static util.Conf.PUERTO;
@@ -19,6 +21,7 @@ import static util.Util.mensaje;
  * Palabra clave de finalización: /fin
  */
 public class GestorCliente implements Runnable {
+    private static final Set<PrintWriter> clientesChat = new HashSet<PrintWriter>();
     private Socket clienteSocket;
     private String apodoServidor;
 
@@ -29,19 +32,30 @@ public class GestorCliente implements Runnable {
 
     @Override
     public void run() {
-        try (PrintWriter salidaSocket = new PrintWriter(clienteSocket.getOutputStream(), true);
+        try (PrintWriter salida = new PrintWriter(clienteSocket.getOutputStream(), true);
              BufferedReader entradaSocket = new BufferedReader(
                      new InputStreamReader(clienteSocket.getInputStream())
              );
         ) {
+            // Añadir el cliente a la lista
+            synchronized (clientesChat) {
+                clientesChat.add(salida);
+            }
+
             System.out.println("Servidor esperando a que el cliente envíe una línea de texto");
             String entradaUsuario;
             String linea;
             while ((entradaUsuario = entradaSocket.readLine()) != null) {
                 System.out.println(entradaUsuario);
-                salidaSocket.println(entradaUsuario);
+                salida.println(entradaUsuario);
                 linea=mensaje(apodoServidor, entradaUsuario, clienteSocket);
                 System.out.println(linea);
+
+                synchronized (clientesChat) {
+                    for(PrintWriter cliente : clientesChat) {
+                        cliente.println(linea);
+                    }
+                }
 
                 if (entradaUsuario.equals("/fin")) {
                     //String despedida = "¡Adios querido cliente!";
@@ -49,7 +63,7 @@ public class GestorCliente implements Runnable {
                     ServidorChat [puerto] [despedida] -> Por defecto usar parámetros de Conf
                     (definir DESPEDIDA en Conf)*/
                     System.out.println(mensaje(apodoServidor, DESPEDIDA.s(), clienteSocket));
-                    salidaSocket.println(PUERTO.s() + " " +DESPEDIDA.s());
+                    salida.println(PUERTO.s() + " " +DESPEDIDA.s());
                     break;
                 }
             }
