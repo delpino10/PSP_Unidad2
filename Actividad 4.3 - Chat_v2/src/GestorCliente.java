@@ -1,12 +1,13 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GestorCliente implements Runnable {
 
     // Alamacena los mensajes y los distruye entre los distintos clientes
     public static ArrayList<GestorCliente> gestorClientes= new ArrayList<>();
-
+    // Conexión
     private Socket socket;
     // Lee los mensajes que han sido enviados desde el cliente
     private BufferedReader bufferedReader;
@@ -26,8 +27,12 @@ public class GestorCliente implements Runnable {
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // Nombre del usuario que lee de los mensajes de la clase cliente
             this.nombreUsuario = bufferedReader.readLine();
-            // Almacena los mensajes en el arrayList
-            this.gestorClientes.add(this);
+
+            synchronized (gestorClientes) {
+                // Almacena los mensajes en el arrayList
+                gestorClientes.add(this);
+            }
+
             emisionMensaje("SERVIDOR: " + nombreUsuario + " ha entrado en el chat!");
         }catch (IOException e){
             cierraConex(socket, bufferedReader, bufferedWriter);
@@ -36,7 +41,8 @@ public class GestorCliente implements Runnable {
 
 
     // Administra cada hilo de forma separada
-    // Eschucha cada mensaje de forma separada
+    // Escucha cada mensaje de forma separada
+    // Procedente del servidor
     @Override
     public void run() {
         String mensajeDesdeCliente;
@@ -44,7 +50,15 @@ public class GestorCliente implements Runnable {
         while (socket.isConnected()) {
             try{
                 mensajeDesdeCliente = bufferedReader.readLine();
+
+                /*if (mensajeDesdeCliente.equalsIgnoreCase("exit")) {
+                    emisionMensaje("SERVIDOR: " + nombreUsuario + " ha salido del chat!");
+                    cierraConex(socket, bufferedReader, bufferedWriter);
+                    break;
+                }*/
+
                 emisionMensaje(mensajeDesdeCliente);
+
             } catch (IOException e) {
                 cierraConex(socket, bufferedReader, bufferedWriter);
                 // Si el cliente se desconecta -> break
@@ -57,17 +71,20 @@ public class GestorCliente implements Runnable {
     // Almacena y gestiona los mensajes recibidos para mandarlos a los demás clientes
     private void emisionMensaje(String mensajeQueEnviar) {
 
-        for (GestorCliente gestorCliente : gestorClientes) {
-            try {
-                if (!gestorCliente.nombreUsuario.equals(nombreUsuario)) {
-                    gestorCliente.bufferedWriter.write(mensajeQueEnviar);
-                    gestorCliente.bufferedWriter.newLine();
-                    //  Llenar completamente el buffer
-                    gestorCliente.bufferedWriter.flush();
+        synchronized (gestorClientes) {
 
+            for (GestorCliente gestorCliente : gestorClientes) {
+                try {
+                    if (!gestorCliente.nombreUsuario.equals(nombreUsuario)) {
+                        gestorCliente.bufferedWriter.write(mensajeQueEnviar);
+                        // Salto de Línea
+                        gestorCliente.bufferedWriter.newLine();
+                        // Llenar completamente el buffer aunque la conexión no esté cerrada
+                        gestorCliente.bufferedWriter.flush();
+                    }
+                } catch (IOException e) {
+                    cierraConex(socket, bufferedReader, bufferedWriter);
                 }
-            } catch (IOException e) {
-                cierraConex(socket, bufferedReader, bufferedWriter);
             }
         }
     }

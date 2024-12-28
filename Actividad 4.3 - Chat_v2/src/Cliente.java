@@ -1,5 +1,7 @@
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Scanner;
 
 public class Cliente {
@@ -22,8 +24,13 @@ public class Cliente {
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             // Nombre de Usuario
             this.nombreUsuario = nombreUsuario;
+        } catch (ConnectException e){
+            System.err.println("No se pudo conectar al servidor: " + e.getMessage());
+        } catch (SocketException e){
+            System.err.println("El servidor cerró la conexión: " + e.getMessage());
         } catch (IOException e) {
             cierraConex(socket, bufferedReader, bufferedWriter);
+            System.err.println("Error inesperado: " + e.getMessage());
         }
     }
 
@@ -44,9 +51,17 @@ public class Cliente {
                 bufferedWriter.write(nombreUsuario + " : " + mensajeParaEnviar);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
+
+                /*if(mensajeParaEnviar.equalsIgnoreCase("exit")){
+                    System.out.println("Desconectando...");
+                }*/
             }
-        } catch (IOException e) {
+        }catch (SocketException e) {
+            System.err.println("El servidor cerró la conexión: " + e.getMessage());
+        }catch(IOException e) {
             cierraConex(socket, bufferedReader, bufferedWriter);
+        } finally {
+            System.out.println("Servidor cerrado.");
         }
     }
 
