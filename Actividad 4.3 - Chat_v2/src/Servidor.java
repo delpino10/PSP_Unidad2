@@ -13,7 +13,6 @@ public class Servidor {
     }
 
 
-
     public static void main(String[] args) throws IOException {
         int host = 0;
         try {
@@ -33,8 +32,6 @@ public class Servidor {
         }
 
     }
-
-
 
     //Mantiene el Servidor encendido
     public void iniciarServidor() {

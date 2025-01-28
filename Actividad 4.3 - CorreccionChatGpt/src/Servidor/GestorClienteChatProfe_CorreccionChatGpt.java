@@ -55,11 +55,11 @@ public class GestorClienteChatProfe_CorreccionChatGpt implements Runnable {
                     }
                 }
 
-//                if (message.equals("/fin")) {
-//                    System.out.println(mensaje(apodoServidor, DESPEDIDA.s(), clienteSocket));
-//                    salida.println(PUERTO.s() + " " + DESPEDIDA.s());
-//                    break;
-//                }
+                /*if (message.equals("/fin")) {
+                    System.out.println(mensaje(apodoServidor, DESPEDIDA.s(), clienteSocket));
+                    salida.println(PUERTO.s() + " " + DESPEDIDA.s());
+                    break;
+                }*/
             }
         } catch (IOException e) {
             System.err.println("Error en la gestión del cliente: " + e.getMessage());

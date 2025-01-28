@@ -5,7 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GestorCliente implements Runnable {
 
-    // Alamacena los mensajes y los distruye entre los distintos clientes
+    // Almacena los mensajes y los distribuye entre los distintos clientes
     public static ArrayList<GestorCliente> gestorClientes= new ArrayList<>();
     // Conexión
     private Socket socket;
@@ -91,6 +91,9 @@ public class GestorCliente implements Runnable {
 
     // Elimina los clientes del ArrayList
     public void eliminarGestorCliente() {
+        // CAda vez que creas una pestaña cliente,
+        // el constructor crea un objeto Cliente
+        // que es al que se refiere la palabra "this"
         gestorClientes.remove(this);
         emisionMensaje("El usuario " + nombreUsuario + " ha sido dejado el chat!");
     }

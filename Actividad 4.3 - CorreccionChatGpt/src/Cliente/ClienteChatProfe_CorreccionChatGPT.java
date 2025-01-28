@@ -74,9 +74,13 @@ public class ClienteChatProfe_CorreccionChatGPT {
 
     private void iniciar() {
         try (
+                // Creas el socket del Cliente (ipCliente, Puerto)
                 Socket cliente = new Socket(ipServidor, puertoServidor);
+                // Lo que escribe el cliente que sale al servidor
                 PrintWriter salidaServidor = new PrintWriter(cliente.getOutputStream(), true);
+                // Lo que entra del servidor, procedente de otro cliente
                 BufferedReader entradaServidor = new BufferedReader(new InputStreamReader(cliente.getInputStream()));
+                // Lo que ek cliente escribe a otro cliente por teclado
                 BufferedReader entradaPorTeclado = new BufferedReader(new InputStreamReader(System.in))
         ) {
             System.out.println("Conectado al servidor. Escribe '/fin' para salir.");
